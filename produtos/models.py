@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models.deletion import CASCADE
 from django.db.models.fields.related import ForeignKey
+from cloudinary.models import CloudinaryField
 
 class Produto(models.Model):
     codigo = models.AutoField(primary_key=True)
@@ -9,7 +10,7 @@ class Produto(models.Model):
     custo = models.DecimalField(blank=False, null=True, max_digits=7, decimal_places=2)
     descricao = models.TextField(blank=True, null=True)
     marca = models.CharField(max_length=30, blank=False, null=True)
-    imagem = models.ImageField(upload_to='images/produtos', blank=True, null=True)
+    imagem = CloudinaryField('images/produtos', blank=True, null=True)
     fornecedor = models.ForeignKey('Fornecedor', on_delete=models.SET_NULL, blank=False, null=True)
     categoria = models.ForeignKey('CategoriaProduto', on_delete=models.SET_NULL, blank=False, null=True)
     quantidade = models.IntegerField(blank=False, null=True)

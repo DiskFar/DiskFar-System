@@ -17,7 +17,7 @@
             <div class="produto-foto col-5 p-3">
                 {% if form_produto.imagem.value %}
                 <img id="image" src="" class="img-fluid mb-2 d-none" />
-                <img id="image_" src="{% get_media_prefix %}{{form_produto.imagem.value}}" class="img-fluid mb-2" />
+                <img id="image_" src="https://res.cloudinary.com/dknbtyyit/{{ form_produto.imagem.value }}" class="img-fluid mb-2" />
                 {% else %}
                 <img id="image" src="" class="img-fluid mb-2 d-none">
                 <img id="image_" src="{% static 'images/not-image.png' %}" class="img-fluid mb-2">
