@@ -10,9 +10,12 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
+import os
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 from pathlib import Path
 from dotenv import load_dotenv
-import os
 
 if 'HOME' in os.environ.keys():
     if '/app' in os.environ['HOME']:
@@ -32,6 +35,13 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG')
 
+# Configuration Cloudinary
+cloudinary.config( 
+    cloud_name = os.environ.get('CLOUD_NAME'), 
+    api_key = os.environ.get('API_KEY'),
+    api_secret = os.environ.get('API_SECRET')
+)
+
 ALLOWED_HOSTS = ['*']
 
 # Application definition
@@ -48,6 +58,7 @@ INSTALLED_APPS = [
     'produtos',
     'vendas',
     'users',
+    'cloudinary'
 ]
 
 MIDDLEWARE = [
