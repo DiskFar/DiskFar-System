@@ -1,0 +1,89 @@
+{% if 'vendas.add_pedido' in perms and 'vendas.change_pedido' in perms %} {% load static %}
+<form method="post" class="col-10" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+    <div class="row container">
+        <p class="row h2 mb-4">Cadastro de pedido</p>
+        <div class="produto-foto col-5 p-3">
+            {% if form_pedido.comprovante.value %}
+            <img id="comprovante" src="" class="img-fluid mb-2 d-none" />
+            <img id="comprovante_" src="{% get_media_prefix %}{{form_pedido.comprovante.value}}" class="img-fluid mb-2" /> {% else %}
+            <img id="comprovante" src="" class="img-fluid mb-2 d-none">
+            <img id="comprovante_" src="{% static 'images/not-image.png' %}" class="img-fluid mb-2"> {% endif %}
+            <div class="d-flex">
+                {{ form_pedido.comprovante }}
+                <button class="btn btn-light" type="button" onclick="resetar_comprovante()"><i class="bi bi-trash"></i></button>
+            </div>
+        </div>
+        <div class="form col-7 ps-2 pe-0">
+            <div>
+                <div class="form-floating mb-3">
+                    {{ form_pedido.cep }}
+                    <label for="{{ form_pedido.cep.name }}">CEP</label>
+                </div>
+                <div class="text-danger">
+                    {{ form_pedido.cep.errors }}
+                </div>
+                <div class="form-floating mb-3">
+                    {{ form_pedido.endereco }}
+                    <label for="{{ form_pedido.endereco.name }}">Endereço</label>
+                </div>
+                <div class="text-danger">
+                    {{ form_pedido.endereco.errors }}
+                </div>
+                <div class="form-floating mb-3">
+                    {{ form_pedido.bairro }}
+                    <label for="{{ form_pedido.bairro.name }}">Bairro</label>
+                </div>
+                <div class="text-danger">
+                    {{ form_pedido.bairro.errors }}
+                </div>
+                <div class="form-floating mb-3">
+                    {{ form_pedido.numero }}
+                    <label for="{{ form_pedido.numero.name }}">Complemento</label>
+                </div>
+                <div class="text-danger">
+                    {{ form_pedido.numero.errors }}
+                </div>
+                <div class="form-floating mb-3">
+                    {{ form_pedido.taxa_entrega }}
+                    <label for="{{ form_pedido.taxa_entrega.name }}">{{ form_pedido.taxa_entrega.label }}</label>
+                </div>
+                <div class="text-danger">
+                    {{ form_pedido.taxa_entrega.errors }}
+                </div>
+                <div class="form-floating mb-3">
+                    {{ form_pedido.status }}
+                    <label for="{{ form_pedido.status.name }}">{{ form_pedido.status.label }}</label>
+                </div>
+                <div class="text-danger">
+                    {{ form_pedido.status.errors }}
+                </div>
+                <div class="form-floating mb-3">
+                    {{ form_pedido.cliente }}
+                    <label for="{{ form_pedido.cliente.name }}">{{ form_pedido.cliente.label }}</label>
+                </div>
+                <div class="text-danger">
+                    {{ form_pedido.cliente.errors }}
+                </div>
+                <div class="form-floating mb-3">
+                    {{ form_pedido.funcionario }}
+                    <label for="{{ form_pedido.funcionario.name }}">Funcionário</label>
+                </div>
+                <div class="text-danger">
+                    {{ form_pedido.funcionario.errors }}
+                </div>
+            </div>
+        </div>
+    </div>
+<div class="container mt-3">
+    {% if form_pedido.status.value == 'E' or form_pedido.status.value == 'C' %}
+    <a href="/pedidos" type="button" class="btn btn-secondary btn-voltar">Voltar</a>
+    {% else %}
+    <input class="btn btn-primary btn-confirmar" type="submit" value="Confirmar">
+    <a href="/pedidos" type="button" class="btn btn-secondary btn-voltar">Voltar</a>
+</div>
+    {% endif %}   
+</form>
+{% else %}
+<p class="text-secondary text-danger pt-2">Você não tem permissões suficientes.</p> 
+{% endif %}

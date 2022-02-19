@@ -1,0 +1,255 @@
+/** Estilizações genéricas **/
+
+* {
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    font-family: ProximaHelvetica, Helvetica, Arial, sans-serif;
+    /* min-height: 100vh; */
+    background-color: #f8f9fa
+}
+
+body .main {
+    padding: 15px;
+}
+
+a {
+    text-decoration: none;
+    color: #000000 !important;
+}
+
+a:hover {
+    color: currentColor !important;
+}
+
+.logout {
+    text-decoration: none;
+    color: #000000 !important;
+}
+
+.form-control:focus {
+    box-shadow: unset;
+    border: 2px solid #54a4cc;
+}
+
+.form-signin {
+    width: 100%;
+    max-width: 350px;
+}
+
+/* Navbar | Header */
+
+.nav-link div {
+    height: 2px;
+    transition-duration: 0.3s;
+    width: 0%
+}
+
+.nav-link:hover {
+    color: #54a4cccc !important;
+}
+
+.nav-link:hover div,
+.atual div {
+    background-color: #54a4cccc;
+    width: 100%;
+}
+
+.logout div {
+    height: 2px;
+    transition-duration: 0.3s;
+    width: 0%
+}
+
+.logout:hover {
+    color: #dc3545 !important;
+}
+
+.logout:hover div {
+    background-color: #dc3545;
+    width: 100%;
+}
+
+/** Componentes **/
+
+.btn-adicionar {
+    color: #ffffff !important;
+    background-color: #54a4cc !important;
+    border-color: #54a4cc !important;
+    padding: 10px;
+    width: 40px;
+    height: 38.5px;
+}
+
+.btn-adicionar:hover {
+    color: #ffffff !important;
+}
+
+.btn-confirmar {
+    color: #fff !important;
+    background-color: #54a4cc !important;
+    border-color: #54a4cc !important;
+}
+
+.btn-voltar,
+.btn-voltar:hover {
+    color: #fff !important;
+}
+
+.btn-whatsapp {
+    background-color: #46cc00;
+    border-color: #46cc00;
+    border-radius: 5px;
+}
+
+.btn-pdf {
+    color: #ffffff !important;
+    background-color: #dc3545;
+    border-color: #dc3545;
+    margin: 0 12px;
+    padding: 10px;
+    width: 40px;
+    height: 38.5px;
+}
+
+.btn-pdf:hover {
+    color: #ffffff !important;
+}
+
+.btn-csv {
+    color: #ffffff !important;
+    background-color: #19993f;
+    border-color: #19993f;
+    padding: 10px;
+    width: 40px;
+    height: 38.5px;
+}
+
+.btn-csv-pedido {
+    color: #ffffff !important;
+    background-color: #19993f;
+    border-color: #19993f;
+    margin: 0 12px;
+    padding: 10px;
+    width: 40px;
+    height: 38.5px;
+}
+
+.btn-csv-historico {
+    color: #ffffff !important;
+    background-color: #19993f;
+    border-color: #19993f;
+    padding: 10px;
+    width: 40px;
+    height: 38.5px;
+}
+
+.btn-csv:hover {
+    color: #ffffff !important;
+}
+
+.btn-csv-pedido:hover {
+    color: #ffffff !important;
+}
+
+.btn-csv-historico:hover {
+    color: #ffffff !important;
+}
+
+.filtro-pedido {
+    margin: 0 12px;
+}
+
+.styled-table {
+    border-collapse: collapse;
+    margin: 25px 0;
+    font-size: 0.9em;
+    font-family: sans-serif;
+    width: 100%;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+.styled-table thead tr {
+    background-color: #54a4cc;
+    color: #fff;
+    text-align: left;
+}
+
+.styled-table th,
+.styled-table td {
+    padding: 12px 15px;
+}
+
+.styled-table tbody tr {
+    border-bottom: 1px solid #dddddd;
+}
+
+.styled-table tbody tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+}
+
+.styled-table tbody tr:last-of-type {
+    border-bottom: 2px solid #54a4cc;
+}
+
+.image-catalogo {
+    display: block;
+    max-height:170px;
+    margin-right: auto !important;
+    margin-left: auto !important;
+    max-width: -webkit-fill-available !important;
+}
+
+/** Produtos **/
+
+.produto-foto {
+    box-shadow: 0px 3px 17px 0px #d5cece;
+    max-width: 370px;
+    height: fit-content;
+}
+
+.produto-descricao {
+    text-align: justify;
+}
+
+.produto-valor {
+    animation: kf-produto-valor 5s;
+    color: #000000; 
+    font: bold 36px Helvetica, Arial, Sans-Serif;
+    margin-bottom: 15px;
+    text-shadow:         
+        1px 1px #667280,
+        2px 2px #667280;
+}
+
+/* Fornecedores */
+#id_fornecedor_telefone{
+    height: 135px;
+}
+
+#label-fornecedor{
+    background: #fff;
+    opacity: 1;
+    height: 24px;
+    left: 0;
+    top: 7px;
+    position: absolute;
+    border: none;
+    padding: 0 0 0 10px;
+    width: 100%;
+}
+
+
+/* Animações */
+/* Produto - Animações */
+
+@keyframes kf-produto-valor {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}

@@ -1,0 +1,87 @@
+{% extends "base.html" %} {% block content %} 
+{% if 'vendas.view_pedido' in perms %}
+    <p class="h2">Pedidos</p>
+    <div class="row">
+        <div class="pesquisa col-4">
+            <form class="input-group" action="{% url 'listagem_pedido' %}" method="get">
+                <input id="campo-pesquisa" type="text" class="form-control" name="q" placeholder="Digite um código ou CPF do cliente..." />
+                <button class="btn btn-secondary" type="submit">
+                    <i class="bi bi-search"></i>
+                </button>
+            </form>
+        </div>
+        {% if 'vendas.add_pedido' in perms %}
+        <a href="adicionar" class="btn btn-primary btn-adicionar">
+            <i class="bi bi-plus-lg"></i>
+        </a>
+        {% endif %}
+        {% if 'vendas.add_pedido' in perms and 'vendas.change_pedido' in perms and 'vendas.delete_pedido' in perms%}
+        <form id="form_filtro" action="/pedidos/filtro/adicionar" method="post" class="col-2 d-none p-0 filtro-pedido">
+        {% csrf_token %}
+        <div class="d-flex">
+            <input type="date" min="2000-01-01" max="2079-12-01" class="form-control col-2 me-2" name="data_inicio" id="data_inicio" required>
+            <input type="date" min="2000-01-01" max="2079-12-01" class="form-control col-2 me-2" name="data_final" id="data_final" required>   
+            <button class="btn btn-primary btn-confirmar me-2" type="submit">Gerar</button>
+            <button class="btn btn-secondary filtro-control me-2" type="button">Cancelar</button>
+        </div>
+        </form>
+        <a class="btn btn-success btn-csv-pedido filtro-control">
+            <i class="bi bi-file-earmark-bar-graph"></i>
+        </a>
+        {% endif %}
+    </div>
+    {% if object_list %}
+    <table class="styled-table">
+        <thead>
+            <tr>
+                <th scope="col"> Código </th>
+                <th scope="col"> Cliente </th>
+                <th scope="col"> Data de Cadastro </th>
+                <th scope="col"> Status </th>
+                {% if 'vendas.view_pedido' in perms or 'vendas.change_pedido' in perms or 'vendas.delete_pedido' in perms %}
+                <th class="text-center" scope="col"> Opções </th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for pedido in object_list %}
+            <tr class="active-row">
+                <th scope="row">{{ pedido.id }}</th>
+                <td>{% if pedido.cliente.cpf is not None %}{{ pedido.cliente.cpf|slice:":3" }}.{{ pedido.cliente.cpf|slice:"3:6" }}.{{ pedido.cliente.cpf|slice:"6:9" }}-{{ pedido.cliente.cpf|slice:"9:11" }}{% else %}---{% endif %}</td>
+                <td>{{ pedido.data_cadastro }}</td>
+                <td>{{ pedido.get_status_display }}</td>
+                {% if 'vendas.view_pedido' in perms or 'vendas.change_pedido' in perms or 'vendas.delete_pedido' in perms %}
+                <td class="col-2 text-center">
+                    {% if 'vendas.view_pedido' in perms %}
+                    <a href="{{ pedido.id }}" type="button"><i class="bi bi-eye-fill"></i></a>{% endif %}
+                    {% if 'vendas.change_pedido' in perms %}
+                    <a href="alterar/{{ pedido.id }}" type="button"><i class="bi bi-pencil-square"></i></a>{% endif %}
+                    {% if 'vendas.delete_pedido' in perms %}
+                    <a href="" data-bs-toggle="modal" data-bs-target="#modalConfirmaExclusao{{ pedido.id }}"><i class="bi bi-trash"></i></a>
+                    {% endif %}
+                </td>
+                {% endif %}
+            </tr>
+            <div class="modal fade" id="modalConfirmaExclusao{{ pedido.id }}" tabindex="-1" role="dialog" aria-labelledby="modalConfirmaExclusao" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header ">
+                            <h5 class="modal-title ">Confirmação</h5>
+                        </div>
+                        <div class="modal-body">Deseja realmente deletar o pedido do CPF: {{ pedido.cliente.cpf|slice:":3" }}.{{ pedido.cliente.cpf|slice:"3:6" }}.{{ pedido.cliente.cpf|slice:"6:9" }}-{{ pedido.cliente.cpf|slice:"9:11" }}?</div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <a href="remover/{{ pedido.id }}"><button type="button"
+                                    class="btn btn-danger">Deletar</button></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="text-secondary pt-2">Pedido não localizado.</p>
+    {% endif %}
+{% else %}
+<p class="text-secondary text-danger pt-2">Você não tem permissões suficientes.</p> {% endif %} {% endblock %}

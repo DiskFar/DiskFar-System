@@ -1,0 +1,1 @@
+web: gunicorn negocio.wsgi
