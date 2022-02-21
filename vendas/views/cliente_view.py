@@ -6,6 +6,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from vendas.forms import FormCliente
 from vendas.models import Clientes
+from validate_docbr import CPF
+from validate_email import validate_email
 
 class ClienteListView(LoginRequiredMixin, ListView):
     model = Clientes
@@ -28,8 +30,8 @@ def adicionar_cliente(request):
     if request.method == 'POST':
         form_cliente = FormCliente(request.POST)
         if form_cliente.is_valid():
-            if form_cliente.cleaned_data['cpf'] == None or len(form_cliente.cleaned_data['cpf']) == 11:
-                if '@' and '.com' in form_cliente.cleaned_data['email']:
+            if CPF().validate(form_cliente.cleaned_data['cpf']):
+                if validate_email(form_cliente.cleaned_data['email']):
                     form_cliente.save()
                     messages.add_message(request, messages.SUCCESS, 'Cliente cadastrado!', extra_tags='success')
                     return redirect('/clientes/adicionar')
@@ -47,6 +49,29 @@ def adicionar_cliente(request):
         return render(request, 'cliente/cliente_add.html', {'form': form_cliente})
 
 @login_required
+def alterar_cliente(request, id): 
+    instance = get_object_or_404(Clientes, id=id)
+    form_cliente = FormCliente(request.POST or None, instance=instance)    
+    if request.method == 'POST':
+        if form_cliente.is_valid():
+            if CPF().validate(form_cliente.cleaned_data['cpf']):
+                if validate_email(form_cliente.cleaned_data['email']):
+                    form_cliente.save()
+                    messages.add_message(request, messages.SUCCESS, 'Cliente alterado!', extra_tags='success')
+                    return redirect('/clientes')
+                else:
+                    messages.add_message(request, messages.ERROR, 'Erro no formulário, tente novamente!', extra_tags='danger')
+                    return render(request, 'cliente/cliente_add.html', {'form': form_cliente})
+            else:
+                messages.add_message(request, messages.ERROR, 'Erro no formulário, tente novamente!', extra_tags='danger')
+                return render(request, 'cliente/cliente_add.html', {'form': form_cliente})
+        else:
+            messages.add_message(request, messages.ERROR, 'Erro no formulário, tente novamente!', extra_tags='danger')
+            return render(request, 'cliente/cliente_add.html', {'form': form_cliente})
+    else:
+        return render(request, 'cliente/cliente_add.html', {'form': form_cliente})
+
+@login_required
 def remover_cliente(request, id):
     if request.method == 'GET':
         cliente = Clientes.objects.get(id=id)
@@ -54,19 +79,3 @@ def remover_cliente(request, id):
         return redirect('/clientes')
     else:
         return render(request, 'cliente/cliente_list.html')
-
-@login_required
-def alterar_cliente(request, id): 
-    instance = get_object_or_404(Clientes, id=id)
-    form_cliente = FormCliente(request.POST or None, instance=instance)
-    
-    if request.method == 'POST':
-        if form_cliente.is_valid():
-            form_cliente.save()
-            messages.add_message(request, messages.SUCCESS, 'Cliente alterado!', extra_tags='success')
-            return redirect('/clientes')
-        else:
-            messages.add_message(request, messages.ERROR, 'Erro no formulário, tente novamente!', extra_tags='danger')
-            return render(request, 'cliente/cliente_add.html', {'form': form_cliente})
-    else:
-        return render(request, 'cliente/cliente_add.html', {'form': form_cliente})
