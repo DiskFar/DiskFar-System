@@ -66,6 +66,21 @@ $(".filtro-control").click(function(){
     $(".btn-csv-pedido").toggleClass('d-none');
 });
 
+// Preenche o endereço de entrega
+$("#id_cep").blur(function(){
+    var cep = this.value.replace(/[^0-9]/, "");
+    if(cep.length != 8){
+        return false;
+    }    
+    var url = "https://viacep.com.br/ws/"+cep+"/json/";
+    $.getJSON(url, function(dadosRetorno){
+        try{
+            $("#id_endereco").val(dadosRetorno.logradouro);
+            $("#id_bairro").val(dadosRetorno.bairro);
+        }catch(ex){}
+    });
+});
+
 elemento = document.querySelector("select[name=produto]")
 elemento.onchange = function (){ 
     codigo = elemento.value ? elemento.value : 0
