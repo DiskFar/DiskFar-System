@@ -6,6 +6,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from vendas.forms import FormFuncionario, FormCargo
 from vendas.models import Funcionario, Cargo
+from validate_docbr import CPF
+from validate_email import validate_email
 
 class FuncionarioListView(LoginRequiredMixin, ListView):
     model = Funcionario
@@ -26,7 +28,7 @@ def adicionar_funcionario(request):
     if request.method == 'POST':
         form_funcionario = FormFuncionario(request.POST)
         if form_funcionario.is_valid():
-            if len(form_funcionario.cleaned_data['cpf']) == 11:
+            if CPF().validate(form_funcionario.cleaned_data['cpf']):
                 form_funcionario.save()
                 messages.add_message(request, messages.SUCCESS, 'Funcionário cadastrado!', extra_tags='success')
                 return redirect('/funcionarios/adicionar')
@@ -41,15 +43,6 @@ def adicionar_funcionario(request):
         return render(request, 'funcionario/funcionario_add.html', {'form_funcionario': form_funcionario, 'form_cargo': form_cargo})
 
 @login_required
-def remover_funcionario(request, id):
-    if request.method == 'GET':
-        funcionario = Funcionario.objects.get(id=id)
-        funcionario.delete()
-        return redirect('/funcionarios')
-    else:
-        return render(request, 'funcionario/funcionario_list.html')
-
-@login_required
 def alterar_funcionario(request, id): 
     instance = get_object_or_404(Funcionario, id=id)
     funcionario = Funcionario.objects.get(id=id)
@@ -57,9 +50,13 @@ def alterar_funcionario(request, id):
     form_cargo = FormCargo()
     if request.method == 'POST':
         if form_funcionario.is_valid():
-            form_funcionario.save()
-            messages.add_message(request, messages.SUCCESS, 'Funcionário alterado!', extra_tags='success')
-            return redirect('/funcionarios')
+            if CPF().validate(form_funcionario.cleaned_data['cpf']):
+                form_funcionario.save()
+                messages.add_message(request, messages.SUCCESS, 'Funcionário alterado!', extra_tags='success')
+                return redirect('/funcionarios')
+            else:
+                messages.add_message(request, messages.ERROR, 'Erro no formulário, tente novamente!', extra_tags='danger')
+                return render(request, 'funcionario/funcionario_add.html', {'form_funcionario': form_funcionario, 'form_cargo': form_cargo})
         else:
             messages.add_message(request, messages.ERROR, 'Erro no formulário, tente novamente!', extra_tags='danger')
             return render(request, 'funcionario/funcionario_add.html', {'form_funcionario': form_funcionario, 'form_cargo': form_cargo})
@@ -76,3 +73,12 @@ def adicionar_cargo(request):
         else:
             messages.add_message(request, messages.ERROR, 'Erro no formulário, tente novamente!', extra_tags='danger')
     return redirect('/funcionarios/adicionar')
+
+@login_required
+def remover_funcionario(request, id):
+    if request.method == 'GET':
+        funcionario = Funcionario.objects.get(id=id)
+        funcionario.delete()
+        return redirect('/funcionarios')
+    else:
+        return render(request, 'funcionario/funcionario_list.html')
