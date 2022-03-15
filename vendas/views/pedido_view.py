@@ -1,4 +1,6 @@
+import os
 import csv
+import mercadopago
 from datetime import datetime
 from django.http import FileResponse, HttpResponse
 from django.contrib.messages.api import success
@@ -72,8 +74,22 @@ def alterar_pedido(request, id):
             if not old_comprovante:
                 form_pedido.save()
             elif form_pedido.cleaned_data['comprovante'] != old_comprovante:
-                pedido.comprovante.storage.delete(pedido.comprovante.name)           
+                pedido.comprovante.storage.delete(pedido.comprovante.name)
             form_pedido.save()
+            if itens:
+                sdk = mercadopago.SDK(os.environ.get('PROD_ACCESS_TOKEN'))
+                preference_data = {
+                    'items': [
+                        {
+                            'title': 'DiskFar - Pagamento Online',
+                            'quantity': 1,
+                            'unit_price': float(pedido.get_total()),
+                        }
+                    ]
+                }
+                preference_response = sdk.preference().create(preference_data)
+                pedido.link_pagamento = preference_response['response']['init_point']
+                pedido.save()
             messages.add_message(request, messages.SUCCESS, 'Pedido alterado!', extra_tags='success')
             return redirect(f'/pedidos/alterar/{pedido.id}')
         else:
