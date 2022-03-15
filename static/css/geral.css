@@ -104,6 +104,12 @@ a:hover {
     border-radius: 5px;
 }
 
+.btn-mercadopago {
+    background-color: #ffffff;
+    border-color: #00b3ff;
+    border-radius: 5px;
+}
+
 .btn-pdf {
     color: #ffffff !important;
     background-color: #dc3545;

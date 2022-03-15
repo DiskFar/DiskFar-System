@@ -34,6 +34,13 @@
                     </tr>
                 </tbody>
             </table>
+            {% if object.link_pagamento %}
+            {% if object.status != 'E' or object.status != 'C' %}
+            <a href="{{ object.link_pagamento }}" type="button" target="_blank" class="btn btn-mercadopago" id="mercadopago">
+                <img src="{% static 'images/mercado-pago.png' %}" width="100px">
+            </a>
+            {% endif %}
+            {% endif %}
             {% if not object.comprovante %}
             <a href="/pedidos" type="button" class="btn btn-secondary btn-voltar">Voltar</a>
             {% else %}

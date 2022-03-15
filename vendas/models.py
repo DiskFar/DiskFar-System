@@ -49,6 +49,7 @@ class Pedido(models.Model):
     status = models.CharField(max_length=10, choices=STATUS_PEDIDO, blank=False, null=False)   
     cliente = models.ForeignKey(Clientes, related_name='pedido_cliente', null=False, blank=False, on_delete=models.CASCADE)
     funcionario = models.ForeignKey(Funcionario, on_delete=models.CASCADE, null=True, blank=False)
+    link_pagamento = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return f'{self.cliente.nome}'
