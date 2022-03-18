@@ -35,9 +35,9 @@
                 </tbody>
             </table>
             {% if object.link_pagamento %}
-            {% if object.status != 'E' or object.status != 'C' %}
-            <a href="{{ object.link_pagamento }}" type="button" target="_blank" class="btn btn-mercadopago" id="mercadopago">
-                <img src="{% static 'images/mercado-pago.png' %}" width="100px">
+            {% if object.status != 'E' and object.status != 'C' %}
+            <a href="{{ object.link_pagamento }}" type="button" onclick="copyLinkClipboard()" target="_blank" class="btn btn-mercadopago" id="mercadopago">
+                <img src="{% static 'images/mercado-pago.png' %}" width="92px">
             </a>
             {% endif %}
             {% endif %}
