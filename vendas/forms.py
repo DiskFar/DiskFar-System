@@ -126,8 +126,11 @@ class FormPedido(ModelForm):
             'funcionario': Select(attrs={
                 'class': "form-select",
                 'placeholder': 'Selecione o funcionário'
-            })
-        }
+            }),
+            'link_pagamento': TextInput(attrs={
+                'class': 'form-control disabled',
+                'style': 'display: none;'
+            })}
 
 class FormPedidoItem(ModelForm):
     class Meta:
