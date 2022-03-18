@@ -32,6 +32,21 @@ class PedidoDetailView(LoginRequiredMixin, DetailView):
     model = Pedido
     template_name = 'pedido/pedido_detail.html'
 
+def gerar_pagamento(pedido):
+    sdk = mercadopago.SDK(os.environ.get('PROD_ACCESS_TOKEN'))
+    preference_data = {
+        'items': [
+            {
+                'title': 'DiskFar - Pagamento Online',
+                'quantity': 1,
+                'unit_price': float(pedido.get_total()),
+            }
+        ]
+    }
+    preference_response = sdk.preference().create(preference_data)
+    pedido.link_pagamento = preference_response['response']['init_point']
+    Pedido.objects.filter(id=pedido.id).update(link_pagamento=pedido.link_pagamento)
+
 @login_required
 def adicionar_pedido(request):
     form_pedido = FormPedido(request.POST or None, request.FILES or None)
@@ -76,20 +91,8 @@ def alterar_pedido(request, id):
             elif form_pedido.cleaned_data['comprovante'] != old_comprovante:
                 pedido.comprovante.storage.delete(pedido.comprovante.name)
             form_pedido.save()
-            if itens:
-                sdk = mercadopago.SDK(os.environ.get('PROD_ACCESS_TOKEN'))
-                preference_data = {
-                    'items': [
-                        {
-                            'title': 'DiskFar - Pagamento Online',
-                            'quantity': 1,
-                            'unit_price': float(pedido.get_total()),
-                        }
-                    ]
-                }
-                preference_response = sdk.preference().create(preference_data)
-                pedido.link_pagamento = preference_response['response']['init_point']
-                pedido.save()
+            pedido = Pedido.objects.get(id=id)
+            gerar_pagamento(pedido)
             messages.add_message(request, messages.SUCCESS, 'Pedido alterado!', extra_tags='success')
             return redirect(f'/pedidos/alterar/{pedido.id}')
         else:
@@ -114,14 +117,16 @@ def alterar_item(request, id_pedido):
             else:
                 new_item.produto.quantidade -= new_item.quantidade
                 new_item.produto.save()
-                
+               
                 item = PedidoItem.objects.filter(pedido=pedido, produto=new_item.produto)
                 if item:
                     item[0].quantidade += new_item.quantidade
-                    item[0].save() 
+                    item[0].save()
                 else:
                     new_item.produto.save()
-                    new_item.save()    
+                    new_item.save()
+            messages.add_message(request, messages.SUCCESS, 'Item adicionado!', extra_tags='success')
+            gerar_pagamento(pedido)
     return redirect(f'/pedidos/alterar/{id_pedido}')
 
 @login_required
@@ -135,7 +140,7 @@ def remover_item(request, id_pedido, id_item):
             return redirect('/pedidos')                                    
         item.produto.quantidade += item.quantidade
         item.produto.save()
-        item.delete()     
+        item.delete()
         return redirect(f'/pedidos/alterar/{id_pedido}')
 
 @login_required
@@ -153,7 +158,7 @@ def adicionar_filtro(request):
                 writer = csv.writer(response, delimiter=';')
                 writer.writerow(['Pedido', 'Data de Cadastro', 'Funcionario', 'Valor Total'])
                 for pedido in pedidos:
-                    writer.writerow([pedido.id, pedido.data_cadastro.strftime('%d/%m/%Y'), pedido.funcionario.nome, pedido.get_total_itens()])
+                    writer.writerow([pedido.id, pedido.data_cadastro.strftime('%d/%m/%Y'), pedido.funcionario.nome, f'{pedido.get_total():.2f}'])
                     messages.add_message(request, messages.SUCCESS, 'Relátorio gerado com sucesso!', extra_tags='success')
                 return response
             else:

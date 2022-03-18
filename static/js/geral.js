@@ -109,3 +109,14 @@ function getProduto(){
 function contato() {
     alert("Mensagem enviada, retornaremos o mais breve possível.");
 };
+
+// Copia link de pagamento para área de transferência
+function copyLinkClipboard(){
+    var url = $(document.getElementById('mercadopago')).attr('href');
+    var $temp = $("<input>");
+    $("body").append($temp);
+    $temp.val(url).select();
+    document.execCommand("copy");
+    $temp.remove();
+    alert("Link copiado para a área de transferência!");
+};

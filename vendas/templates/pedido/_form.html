@@ -8,7 +8,7 @@
             <img id="comprovante" src="" class="img-fluid mb-2 d-none" />
             <img id="comprovante_" src="{% get_media_prefix %}{{form_pedido.comprovante.value}}" class="img-fluid mb-2" /> {% else %}
             <img id="comprovante" src="" class="img-fluid mb-2 d-none">
-            <img id="comprovante_" src="{% static 'images/not-image.png' %}" class="img-fluid mb-2"> {% endif %}
+            <img id="comprovante_" src="{% static 'images/not-receipt.png' %}" class="img-fluid mb-2"> {% endif %}
             <div class="d-flex">
                 {{ form_pedido.comprovante }}
                 <button class="btn btn-light" type="button" onclick="resetar_comprovante()"><i class="bi bi-trash"></i></button>
@@ -71,6 +71,9 @@
                 </div>
                 <div class="text-danger">
                     {{ form_pedido.funcionario.errors }}
+                </div>
+                <div class="form-floating mb-3 disabled">
+                    {{ form_pedido.link_pagamento }}
                 </div>
             </div>
         </div>
