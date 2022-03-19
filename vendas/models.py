@@ -32,8 +32,8 @@ class Funcionario(models.Model):
 
 class Pedido(models.Model):
     STATUS_PEDIDO = (
-        ("R", "Realizado"),
         ("P", "Em preparação"),
+        ("R", "Realizado"),
         ("A", "A caminho"),
         ("E", "Entregue"),
         ("C", "Cancelado"),
@@ -60,6 +60,9 @@ class Pedido(models.Model):
 
     def get_total(self):
         return float(self.get_total_itens() or 0) + float(self.taxa_entrega or 0)
+
+    def get_status_display(self):
+        return dict(self.STATUS_PEDIDO).get(self.status)
 
 class PedidoItem(models.Model):
     id = models.AutoField(primary_key=True)
