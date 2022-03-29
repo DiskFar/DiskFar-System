@@ -9,9 +9,9 @@ document.querySelectorAll('.nav-link').forEach(function(elemento){
 
 // Esconde as mensagens após um tempo
 setTimeout(function() {
-    let message = document.querySelector('.messages');
-    if (message !== undefined && message !== null){
-        message.style.display = 'none'
+    let message = document.querySelectorAll('.messages');
+    for (let i = 0; i < message.length; i++) {
+        message[i].style.display = "none";
     }
 }, 3000)
 
