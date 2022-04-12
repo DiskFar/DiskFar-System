@@ -68,17 +68,20 @@ $(".filtro-control").click(function(){
 
 // Preenche o endereço de entrega
 $("#id_cep").blur(function(){
-    var cep = this.value.replace(/[^0-9]/, "");
-    if(cep.length != 8){
-        return false;
-    }    
-    var url = "https://viacep.com.br/ws/"+cep+"/json/";
-    $.getJSON(url, function(dadosRetorno){
-        try{
-            $("#id_endereco").val(dadosRetorno.logradouro);
-            $("#id_bairro").val(dadosRetorno.bairro);
-        }catch(ex){}
-    });
+    var cep = this.value.replace(/[^0-9]/, "")
+    if(/[a-z]/i.test(cep)){alert(`O CEP: ${cep} informado não é válido!`); this.value = ""}
+    else {
+        var url = `https://viacep.com.br/ws/${cep}/json/`
+        $.get(url, function(data){
+            if(data.erro){
+                alert(`CEP: ${cep} não encontrado!`)
+                $("#id_endereco").val("")
+                $("#id_bairro").val("")
+                $("#id_cep").val("")}
+            else {
+                $("#id_endereco").val(data.logradouro)
+                $("#id_bairro").val(data.bairro)}
+    })}
 });
 
 elemento = document.querySelector("select[name=produto]")
