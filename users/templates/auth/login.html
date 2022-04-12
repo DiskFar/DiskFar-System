@@ -3,7 +3,7 @@
 {% block content %}
 <body class="text-center">
     <main class="form-signin m-auto p-15">
-        <form method="post">
+        <form id="form-login" method="post">
         {% csrf_token %}
             <img class="mb-4" src="{% static 'images/farmacia.png'%}" width="100%">
             <h1 class="h3 mb-3 fw-normal">DiskFar</h1>
@@ -14,6 +14,8 @@
             </div>
             {% endfor %}
             <div class="container p-2">
+                <div class="g-recaptcha p-3" data-sitekey="6Lc6DGgfAAAAAN9ZKiLRnb-1_EZLaMpPuAylzf0V"></div>
+                <br/>
                 <button class="btn btn-primary btn-confirmar" type="submit">Entrar</button>
                 <input class="btn btn-secondary" type="reset" value="Resetar" />
             </div>
