@@ -43,9 +43,12 @@ def gerar_pagamento(pedido):
             }
         ]
     }
-    preference_response = sdk.preference().create(preference_data)
-    pedido.link_pagamento = preference_response['response']['init_point']
-    Pedido.objects.filter(id=pedido.id).update(link_pagamento=pedido.link_pagamento)
+    try:
+        preference_response = sdk.preference().create(preference_data)['response']['sandbox_init_point']
+        Pedido.objects.filter(id=pedido.id).update(link_pagamento=preference_response)
+        return True
+    except Exception:
+        return False
 
 @login_required
 def adicionar_pedido(request):
@@ -92,9 +95,12 @@ def alterar_pedido(request, id):
                 pedido.comprovante.storage.delete(pedido.comprovante.name)
             form_pedido.save()
             pedido = Pedido.objects.get(id=id)
-            gerar_pagamento(pedido)
-            messages.add_message(request, messages.SUCCESS, 'Pedido alterado!', extra_tags='success')
-            return redirect(f'/pedidos/alterar/{pedido.id}')
+            if gerar_pagamento(pedido):
+                messages.add_message(request, messages.SUCCESS, 'Pedido alterado!', extra_tags='success')
+                return redirect(f'/pedidos/alterar/{pedido.id}')
+            else:
+                messages.add_message(request, messages.ERROR, 'Erro ao gerar pagamento, tente novamente!', extra_tags='danger')
+                return render(request, 'pedido/pedido_edit.html', {'form': form_pedido}) 
         else:
             messages.add_message(request, messages.ERROR, 'Erro no formulário, tente novamente!', extra_tags='danger')
             return render(request, 'pedido/pedido_edit.html', {'form': form_pedido})
@@ -126,7 +132,12 @@ def alterar_item(request, id_pedido):
                     new_item.produto.save()
                     new_item.save()
             messages.add_message(request, messages.SUCCESS, 'Item adicionado!', extra_tags='success')
-            gerar_pagamento(pedido)
+            if gerar_pagamento(pedido):
+                messages.add_message(request, messages.SUCCESS, 'Pedido alterado!', extra_tags='success')
+                return redirect(f'/pedidos/alterar/{pedido.id}')
+            else:
+                messages.add_message(request, messages.ERROR, 'Erro ao gerar pagamento, tente novamente!', extra_tags='danger')
+                return render(request, 'pedido/pedido_edit.html', {'form': form_pedido})
     return redirect(f'/pedidos/alterar/{id_pedido}')
 
 @login_required
