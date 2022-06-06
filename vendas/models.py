@@ -60,6 +60,9 @@ class Pedido(models.Model):
 
     def get_total(self):
         return float(self.get_total_itens() or 0) + float(self.taxa_entrega or 0)
+    
+    def get_display_status(self):
+        return dict(self.STATUS_PEDIDO).get(self.status)
 
 class PedidoItem(models.Model):
     id = models.AutoField(primary_key=True)

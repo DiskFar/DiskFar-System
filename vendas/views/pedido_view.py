@@ -13,6 +13,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from vendas.forms import FormPedido, FormPedidoItem
 from vendas.models import Pedido, PedidoItem, Funcionario
 from django.http import Http404
+from .mensagem_view import envia_mensagem_whatsapp, envia_mensagem_sms
 
 class PedidoListView(LoginRequiredMixin, ListView):
     model = Pedido
@@ -96,6 +97,22 @@ def alterar_pedido(request, id):
             form_pedido.save()
             pedido = Pedido.objects.get(id=id)
             if gerar_pagamento(pedido):
+                if form_pedido.cleaned_data['status'] == 'P':
+                    mensagem = f'Olá {pedido.cliente.nome.split(" ")[0]}, seu pedido foi confirmado com sucesso! 🎉\n\nStatus do pedido: {pedido.get_display_status()}\n\nPara realizar o pagamento online do pedido, acesse o link:\n{pedido.link_pagamento}\n\nDiskFar agradeçe pela preferência! 💙'
+                    envia_mensagem_whatsapp(pedido.cliente.celular, mensagem)
+                    envia_mensagem_sms(pedido.cliente.celular, mensagem)
+                elif form_pedido.cleaned_data['status'] == 'A':
+                    mensagem = f'Olá {pedido.cliente.nome.split(" ")[0]}, pedido a caminho! 🛵\n\nQualquer dúvida, entre em contato conosco. 📞\n\nDiskFar agradece pela preferência! 💙'
+                    envia_mensagem_whatsapp(pedido.cliente.celular, mensagem)
+                    envia_mensagem_sms(pedido.cliente.celular, mensagem)
+                elif form_pedido.cleaned_data['status'] == 'E':
+                    mensagem = f'Olá {pedido.cliente.nome.split(" ")[0]}, pedido foi entregue! 🚚\n\nObrigado por comprar conosco! 💙'
+                    envia_mensagem_whatsapp(pedido.cliente.celular, mensagem)
+                    envia_mensagem_sms(pedido.cliente.celular, mensagem)
+                elif form_pedido.cleaned_data['status'] == 'C':
+                    mensagem = f'Olá {pedido.cliente.nome.split(" ")[0]}, seu pedido foi cancelado! 😢\n\nEntre em contato conosco para mais informações! 📞\n\nDiskFar agradece pela preferência! 💙'
+                    envia_mensagem_whatsapp(pedido.cliente.celular, mensagem)
+                    envia_mensagem_sms(pedido.cliente.celular, mensagem)          
                 messages.add_message(request, messages.SUCCESS, 'Pedido alterado!', extra_tags='success')
                 return redirect(f'/pedidos/alterar/{pedido.id}')
             else:
