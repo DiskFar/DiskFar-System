@@ -2,6 +2,7 @@ import os
 import requests
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
 from django.contrib import messages
 from users.models import User
 from users.forms import LoginForm
@@ -35,7 +36,9 @@ def login_view(request):
                     if _next is not None:
                         return redirect(_next)
                     return redirect('/')
-                messages.add_message(request, messages.ERROR, 'Usuário ou senha inválidos', extra_tags='danger')   
+                if not User.objects.filter(username=os.environ.get('SUPERUSER_USERNAME')).exists():
+                    User.objects.create_superuser(os.environ.get('SUPERUSER_USERNAME'), os.environ.get('SUPERUSER_EMAIL'), os.environ.get('SUPERUSER_PASSWORD'))
+                messages.add_message(request, messages.ERROR, 'Usuário ou senha inválidos!', extra_tags='danger')
                 return redirect('/')
             messages.add_message(request, messages.ERROR, 'Por gentileza, preencha o reCAPTCHA corretamente!', extra_tags='danger')
             return redirect('/')
